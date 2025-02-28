@@ -1,0 +1,125 @@
+ <!DOCTYPE html>
+ <html lang="en">
+ <head>
+     <meta charset="UTF-8">
+     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <title>Chatbot Interface</title>
+     <style>
+         body {
+             font-family: 'Poppins', sans-serif;
+             display: flex;
+             flex-direction: column;
+             align-items: center;
+             justify-content: center;
+             height: 100vh;
+             background: linear-gradient(135deg, #667eea, #764ba2);
+             margin: 0;
+             color: white;
+         }
+         .container {
+             background: white;
+             padding: 20px;
+             border-radius: 10px;
+             box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+             width: 500px;
+             text-align: center;
+             color: #333;
+         }
+         h2 {
+             margin-bottom: 10px;
+         }
+         textarea {
+             width: 100%;
+             height: 100px;
+             margin-bottom: 10px;
+             padding: 10px;
+             border-radius: 5px;
+             border: 1px solid #ccc;
+             resize: none;
+             font-size: 14px;
+         }
+         button {
+             background: #007bff;
+             color: white;
+             border: none;
+             padding: 10px;
+             cursor: pointer;
+             width: 100%;
+             border-radius: 5px;
+             font-size: 16px;
+             transition: background 0.3s;
+         }
+         button:hover {
+             background: #0056b3;
+         }
+         .response-container {
+             margin-top: 10px;
+             padding: 15px;
+             background: #f4f4f4;
+             border-radius: 5px;
+             min-height: 50px;
+             text-align: left;
+             font-size: 14px;
+             white-space: pre-wrap;
+             word-wrap: break-word;
+             display: flex;
+             align-items: center;
+             justify-content: flex-start;
+             overflow-x: auto;
+         }
+         .loader {
+             border: 4px solid #f3f3f3;
+             border-top: 4px solid #007bff;
+             border-radius: 50%;
+             width: 20px;
+             height: 20px;
+             animation: spin 1s linear infinite;
+             display: none;
+         }
+         @keyframes spin {
+             0% { transform: rotate(0deg); }
+             100% { transform: rotate(360deg); }
+         }
+     </style>
+ </head>
+ <body>
+     <div class="container">
+         <h2>AI Chatbot</h2>
+         <textarea id="question" placeholder="Type your question..."></textarea>
+         <button onclick="sendQuestion()">Submit</button>
+         <div class="response-container" id="response">
+             <div class="loader" id="loader"></div>
+             <span id="responseText">Response will appear here...</span>
+         </div>
+     </div>
+ 
+     <script>
+         function sendQuestion() {
+             const question = document.getElementById("question").value;
+             const responseText = document.getElementById("responseText");
+             const loader = document.getElementById("loader");
+             responseText.style.display = "none";
+             loader.style.display = "block";
+             
+             fetch("http://localhost:3000/", {
+                 method: "POST",
+                 headers: {
+                     "Content-Type": "application/json"
+                 },
+                 body: JSON.stringify({ msg: question })
+             })
+             .then(response => response.json())
+             .then(data => {
+                 responseText.innerText = JSON.stringify(data, null, 2);
+                 responseText.style.display = "block";
+                 loader.style.display = "none";
+             })
+             .catch(error => {
+                 responseText.innerText = "Error: " + error;
+                 responseText.style.display = "block";
+                 loader.style.display = "none";
+             });
+         }
+     </script>
+ </body>
+ </html>
